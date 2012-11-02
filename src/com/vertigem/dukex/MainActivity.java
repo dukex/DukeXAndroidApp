@@ -1,12 +1,20 @@
 package com.vertigem.dukex;
 
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -27,32 +35,88 @@ public class MainActivity extends FragmentActivity {
     PostsPagerAdapter postPagerAdapter;
 
     ViewPager postsPager;
-    
+
     private final ArrayList<Post> posts = new ArrayList<Post>();
-    
-    
+
+
     private static final int PROGRESS = 0x1;
 
     private ProgressBar mProgress;
     private int mProgressStatus = 0;
     private Handler mHandler = new Handler();
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-    	posts.add(new Post(
-    			"A Felicidade Ficar", 
-    			"O importante é a felicidade ficar!\nAfinal tudo vai, vem, foi, é\nNada precisamos suportar\nUm dia temos tudo\nNo outro nada vai estar"));
-    	
-    	posts.add(new Post(
-    			"Duke por Duke", 
-    			"Me traz essa menina\nquero de volta\nSeu amor e sua dor"));
-    	
+
+    	mProgress = (ProgressBar) findViewById(R.id.progress_bar);
+    	new Thread(new Runnable() {
+            public void run() {
+                while (mProgressStatus < 100) {
+                    mProgressStatus = getPosts();
+
+                    // Update the progress bar
+                    mHandler.post(new Runnable() {
+                        public void run() {
+                            mProgress.setProgress(mProgressStatus);
+                        }
+                    });
+                }
+            }
+        }).start();
+    	updateDisplay();
+    }
+
+    private int getPosts(){
+    	RSSFeed feed = getFeed("http://duke.vertigem.xxx/tagged/poemas/rss");
+    	for(RSSItem item: feed.getAllItems()){
+    		mProgressStatus = 50;
+    		posts.add(new Post(item.getTitle(), item.getDescription()));
+    	}
+		return 100;
+
+    }
+    private RSSFeed getFeed(String urlToRssFeed)
+    {
+
+        try
+        {
+
+            // setup the url
+           URL url = new URL(urlToRssFeed);
+
+
+           SAXParserFactory factory = SAXParserFactory.newInstance();
+           SAXParser parser = factory.newSAXParser();
+
+
+           XMLReader xmlreader = parser.getXMLReader();
+
+           RSSHandler theRssHandler = new RSSHandler();
+           // assign our handler
+           xmlreader.setContentHandler(theRssHandler);
+           // get our data through the url class
+           InputSource is = new InputSource(url.openStream());
+           // perform the synchronous parse
+           xmlreader.parse(is);
+           // get the results - should be a fully populated RSSFeed instance,
+		   // or null on error
+           return theRssHandler.getFeed();
+        }
+        catch (Exception ee)
+        {
+        	Log.e("ERROR", ee.toString());
+            // if you have a problem, simply return null
+            return null;
+        }
+    }
+
+    public void updateDisplay(){
     	postPagerAdapter = new PostsPagerAdapter(getSupportFragmentManager(), posts);
-  
-    	
+
+
         postsPager = (ViewPager) findViewById(R.id.pager);
         postsPager.setAdapter(postPagerAdapter);
     }
@@ -63,22 +127,22 @@ public class MainActivity extends FragmentActivity {
         return true;
     }
 
-    
+
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
      * sections of the app.
      */
     public class PostsPagerAdapter extends FragmentPagerAdapter {
 
-		
-    	
+
+
         private ArrayList<Post> posts;
 
 		public PostsPagerAdapter(FragmentManager fm, ArrayList<Post> posts) {
             super(fm);
             this.posts = posts;
         }
-        
+
         @Override
         public Fragment getItem(int i) {
             Fragment fragment = new PostFragment(this.posts.get(i));
@@ -100,25 +164,25 @@ public class MainActivity extends FragmentActivity {
 
     public static class PostFragment extends Fragment{
    	 	public Post post;
-   	 
+
     	public PostFragment(Post post){
     		this.post = post;
     	}
 
-    	 
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             View layout = inflater.inflate(R.layout.post, container, false);
-            
+
             TextView textView = (TextView) layout.findViewById(R.id.text);
             textView.setText(post.text);
-            
+
             TextView titleView = (TextView) layout.findViewById(R.id.title);
             titleView.setText(post.title);
-            
+
             return layout;
         }
-    	
+
     }
 }
