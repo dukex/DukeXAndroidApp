@@ -28,6 +28,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -57,7 +58,7 @@ public class MainActivity extends FragmentActivity {
                 while (mProgressStatus < 100) {
                     mProgressStatus = getPosts();
 
-                    // Update the progress bar
+                   
                     mHandler.post(new Runnable() {
                         public void run() {
                             mProgress.setProgress(mProgressStatus);
@@ -123,7 +124,7 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_main, menu);
+        //getMenuInflater().inflate(R.menu.activity_main, menu);
         return true;
     }
 
@@ -175,11 +176,10 @@ public class MainActivity extends FragmentActivity {
                 Bundle savedInstanceState) {
             View layout = inflater.inflate(R.layout.post, container, false);
 
-            TextView textView = (TextView) layout.findViewById(R.id.text);
-            textView.setText(post.text);
-
-            TextView titleView = (TextView) layout.findViewById(R.id.title);
-            titleView.setText(post.title);
+           
+           
+            WebView webview = (WebView) layout.findViewById(R.id.html_text);
+            webview.loadData(post.text, "text/html; charset=UTF-8", null);
 
             return layout;
         }
