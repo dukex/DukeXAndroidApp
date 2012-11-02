@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class MainActivity extends FragmentActivity {
@@ -28,6 +29,13 @@ public class MainActivity extends FragmentActivity {
     ViewPager postsPager;
     
     private final ArrayList<Post> posts = new ArrayList<Post>();
+    
+    
+    private static final int PROGRESS = 0x1;
+
+    private ProgressBar mProgress;
+    private int mProgressStatus = 0;
+    private Handler mHandler = new Handler();
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,7 +55,6 @@ public class MainActivity extends FragmentActivity {
     	
         postsPager = (ViewPager) findViewById(R.id.pager);
         postsPager.setAdapter(postPagerAdapter);
-
     }
 
     @Override
