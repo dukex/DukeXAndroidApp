@@ -24,18 +24,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class MainActivity extends FragmentActivity {
-
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide fragments for each of the
-     * sections. We use a {@link android.support.v4.app.FragmentPagerAdapter} derivative, which will
-     * keep every loaded fragment in memory. If this becomes too memory intensive, it may be best
-     * to switch to a {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
     PostsPagerAdapter postPagerAdapter;
 
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
     ViewPager postsPager;
     
     private final ArrayList<Post> posts = new ArrayList<Post>();
@@ -44,11 +34,7 @@ public class MainActivity extends FragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // Create the adapter that will return a fragment for each of the three primary sections
-        // of the app.
-        
 
-    	
     	posts.add(new Post(
     			"A Felicidade Ficar", 
     			"O importante é a felicidade ficar!\nAfinal tudo vai, vem, foi, é\nNada precisamos suportar\nUm dia temos tudo\nNo outro nada vai estar"));
@@ -58,7 +44,8 @@ public class MainActivity extends FragmentActivity {
     			"Me traz essa menina\nquero de volta\nSeu amor e sua dor"));
     	
     	postPagerAdapter = new PostsPagerAdapter(getSupportFragmentManager(), posts);
-        // Set up the ViewPager with the sections adapter.
+  
+    	
         postsPager = (ViewPager) findViewById(R.id.pager);
         postsPager.setAdapter(postPagerAdapter);
 
