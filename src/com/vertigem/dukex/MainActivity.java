@@ -51,7 +51,7 @@ public class MainActivity extends FragmentActivity {
     	
     	posts.add(new Post(
     			"A Felicidade Ficar", 
-    			"O importante Ž a felicidade ficar!\nAfinal tudo vai, vem, foi, Ž\nNada precisamos suportar\nUm dia temos tudo\nNo outro nada vai estar"));
+    			"O importante Ã© a felicidade ficar!\nAfinal tudo vai, vem, foi, Ã©\nNada precisamos suportar\nUm dia temos tudo\nNo outro nada vai estar"));
     	
     	posts.add(new Post(
     			"Duke por Duke", 
