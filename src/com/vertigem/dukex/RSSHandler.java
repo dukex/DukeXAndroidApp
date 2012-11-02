@@ -5,9 +5,9 @@ import org.xml.sax.*;
 import android.util.Log;
 
 
-public class RSSHandler extends DefaultHandler 
+public class RSSHandler extends DefaultHandler
 {
-    
+
     RSSFeed _feed;
     RSSItem _item;
     String _lastElementName = "";
@@ -17,15 +17,15 @@ public class RSSHandler extends DefaultHandler
     final int RSS_DESCRIPTION = 3;
     final int RSS_CATEGORY = 4;
     final int RSS_PUBDATE = 5;
-    
+
     int depth = 0;
     int currentstate = 0;
     /*
-     * Constructor 
+     * Constructor
      */
     RSSHandler(){
     }
-    
+
     /*
      * getFeed - this returns our feed when all of the parsing is complete
      */
@@ -36,10 +36,10 @@ public class RSSHandler extends DefaultHandler
 
     public void startDocument() throws SAXException
     {
-    	
+
         // initialize our RSSFeed object - this will hold our parsed contents
         _feed = new RSSFeed();
-        // initialize the RSSItem object - you will use this as a crutch to grab 
+        // initialize the RSSItem object - you will use this as a crutch to grab
 		// the info from the channel
         // because the channel and items have very similar entries..
         _item = new RSSItem();
@@ -48,7 +48,7 @@ public class RSSHandler extends DefaultHandler
     public void endDocument() throws SAXException
     {
     }
-    public void startElement(String namespaceURI, String localName,String qName, 
+    public void startElement(String namespaceURI, String localName,String qName,
                                              Attributes atts) throws SAXException
     {
         depth++;
@@ -67,7 +67,7 @@ public class RSSHandler extends DefaultHandler
         {
             // create a new item
             _item = new RSSItem();
-            
+
             return;
         }
         if (localName.equals("title"))
@@ -95,13 +95,13 @@ public class RSSHandler extends DefaultHandler
             currentstate = RSS_PUBDATE;
             return;
         }
-        // if you don't explicitly handle the element, make sure you don't wind 
-               // up erroneously storing a newline or other bogus data into one of our 
+        // if you don't explicitly handle the element, make sure you don't wind
+               // up erroneously storing a newline or other bogus data into one of our
                // existing elements
         currentstate = 0;
     }
-    
-    public void endElement(String namespaceURI, String localName, String qName) 
+
+    public void endElement(String namespaceURI, String localName, String qName)
                                                                throws SAXException
     {
         depth--;
@@ -112,12 +112,12 @@ public class RSSHandler extends DefaultHandler
             return;
         }
     }
-     
+
     public void characters(char ch[], int start, int length)
     {
         String theString = new String(ch,start,length);
         Log.i("RSSReader","characters[" + theString + "]");
-        
+
         switch (currentstate)
         {
             case RSS_TITLE:
@@ -129,8 +129,11 @@ public class RSSHandler extends DefaultHandler
                 currentstate = 0;
                 break;
             case RSS_DESCRIPTION:
-                _item.setDescription(theString);
-                currentstate = 0;
+            	String description = _item.getDescription();
+            	if(description == null){
+            		description = "";
+            	}
+                _item.setDescription(description + theString);
                 break;
             case RSS_CATEGORY:
                 _item.setCategory(theString);
@@ -143,6 +146,6 @@ public class RSSHandler extends DefaultHandler
             default:
                 return;
         }
-        
+
     }
 }
